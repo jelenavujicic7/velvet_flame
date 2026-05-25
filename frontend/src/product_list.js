@@ -10,11 +10,11 @@ import premiumSet from './assets/f3c0cb99-570e-4e5a-b37a-a67efbeba968.jpeg';
 const products = [
   {
     _id: '1',
-    name: 'Elegantna sveca',
+    name: 'Elegantna sveća',
     image: elegantnaSveca,
     description:
-      'Rucno izradjena sveca za toplu i elegantnu atmosferu u domu.',
-    category: 'Svece',
+      'Ručno izrađena sveća za toplu i elegantnu atmosferu u domu.',
+    category: 'Sveće',
     price: 450.0,
     countInStock: 10,
     rating: 5.0,
@@ -22,11 +22,11 @@ const products = [
   },
   {
     _id: '2',
-    name: 'Mirisna sveca',
+    name: 'Mirisna sveća',
     image: mirisnaSveca,
     description:
-      'Nezna mirisna sveca koja prostoru daje luksuzan i prijatan osecaj.',
-    category: 'Svece',
+      'Nežna mirisna sveća koja prostoru daje luksuzan i prijatan osećaj.',
+    category: 'Sveće',
     price: 700.0,
     countInStock: 7,
     rating: 5.0,
@@ -37,7 +37,7 @@ const products = [
     name: 'Poklon set',
     image: poklonSet,
     description:
-      'Pazljivo uklopljen set za poklon, posebne datume i male znake paznje.',
+      'Pažljivo uklopljen set za poklon, posebne datume i male znake pažnje.',
     category: 'Pokloni',
     price: 450.0,
     countInStock: 5,
@@ -46,10 +46,10 @@ const products = [
   },
   {
     _id: '4',
-    name: 'Dekorativna sveca',
+    name: 'Dekorativna sveća',
     image: dekorativnaSveca,
     description:
-      'Dekorativna sveca koja lepo izgleda na polici, stolu ili nocnom ormaricu.',
+      'Dekorativna sveća koja lepo izgleda na polici, stolu ili noćnom ormaricu.',
     category: 'Dekoracija',
     price: 950.0,
     countInStock: 11,
@@ -61,7 +61,7 @@ const products = [
     name: 'Lux kolekcija',
     image: luksuznaSveca,
     description:
-      'Sveca iz elegantne Elena Lux kolekcije za poseban izgled enterijera.',
+      'Sveća iz elegantne Elena Lux kolekcije za poseban izgled enterijera.',
     category: 'Lux',
     price: 650.0,
     countInStock: 7,
@@ -73,8 +73,8 @@ const products = [
     name: 'Uskršnja dekoracija',
     image: romanticnaSveca,
     description:
-      'Uskrsnja dekoracija sa toplim detaljima za praznicni sto i dom.',
-    category: 'Svece',
+      'Uskrsnja dekoracija sa toplim detaljima za praznični sto i dom.',
+    category: 'Sveće',
     price: 1200.0,
     countInStock: 0,
     rating: 4,
@@ -82,10 +82,10 @@ const products = [
   },
   {
     _id: '7',
-    name: 'Pastelna sveca',
+    name: 'Pastelna sveća',
     image: pastelnaSveca,
     description:
-      'Nezna dekorativna sveca u pastelnom tonu za miran i elegantan prostor.',
+      'Nežna dekorativna sveća u pastelnom tonu za miran i elegantan prostor.',
     category: 'Dekoracija',
     price: 800.0,
     countInStock: 9,
@@ -97,7 +97,7 @@ const products = [
     name: 'Premium poklon set',
     image: premiumSet,
     description:
-      'Luksuzan Elena Lux set za poklon, pazljivo pripremljen za posebne prilike.',
+      'Luksuzan Elena Lux set za poklon, pažljivo pripremljen za posebne prilike.',
     category: 'Pokloni',
     price: 600.0,
     countInStock: 4,

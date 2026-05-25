@@ -13,7 +13,7 @@ const HomeScreen = () => {
       <Container>
         <div className="home-title">
           <h1>Novi proizvodi</h1>
-          <p>Rucno birani komadi za toplinu, stil i male svakodnevne rituale.</p>
+          <p>Ručno birani komadi za toplinu, stil i male svakodnevne rituale.</p>
         </div>
 
         {isLoading ? (
