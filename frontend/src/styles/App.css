@@ -33,6 +33,11 @@
   letter-spacing: 0.01em;
 }
 
+main {
+  min-height: 80vh;
+  user-select: none;
+}
+
 .home-screen {
   min-height: calc(100vh - 66px);
   padding: 56px 0;
@@ -76,10 +81,43 @@
   min-height: 48px;
 }
 
+.product-title {
+  height: 2.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.1rem;
+  color: #222;
+  text-decoration: none;
+}
+
 .product-card-description {
   color: #7d6a67;
   min-height: 92px;
   font-size: 0.95rem;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #f4b860;
+  margin: 12px 0;
+}
+
+.rating span {
+  margin: 0.1rem;
+}
+
+.rating svg {
+  color: #e6cd69;
+}
+
+.rating-text {
+  color: #7d6a67;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding-left: 0.5rem;
 }
 
 .product-card-price {

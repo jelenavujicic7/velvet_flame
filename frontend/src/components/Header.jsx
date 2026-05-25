@@ -1,6 +1,6 @@
 import { Badge, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { FaShoppingBag, FaUser } from 'react-icons/fa';
-import logo from '../style/logo.svg';
+import logo from '../styles/logo.svg';
 
 const Header = () => {
   const cartItemsCount = 0;
