@@ -1,0 +1,90 @@
+.app {
+  min-height: 100vh;
+  background: #fff8f5;
+}
+
+.elena-navbar {
+  background: #3b2028;
+  box-shadow: 0 6px 20px rgba(59, 32, 40, 0.14);
+}
+
+.elena-navbar .navbar-brand {
+  letter-spacing: 0.02em;
+}
+
+.elena-navbar .nav-link {
+  color: rgba(255, 248, 245, 0.84);
+  font-weight: 500;
+}
+
+.elena-navbar .nav-link:hover,
+.elena-navbar .nav-link:focus {
+  color: #f4b860;
+}
+
+.elena-footer {
+  background: #3b2028;
+  color: rgba(255, 248, 245, 0.88);
+  border-top: 4px solid #f4b860;
+}
+
+.elena-footer p {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.home-screen {
+  min-height: calc(100vh - 66px);
+  padding: 56px 0;
+  background: #fff8f5;
+  color: #3b2028;
+}
+
+.home-title {
+  max-width: 720px;
+  margin: 0 auto 32px;
+  text-align: center;
+}
+
+.home-title h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 700;
+}
+
+.home-title p {
+  color: #7d6a67;
+  font-size: 1.1rem;
+  margin: 12px 0 0;
+}
+
+.product-card {
+  height: calc(100% - 2rem);
+  border: 1px solid #ead8d0;
+  border-radius: 8px;
+  background: #fffdfb;
+}
+
+.product-card-image {
+  height: 250px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.product-card-title {
+  color: #3b2028;
+  min-height: 48px;
+}
+
+.product-card-description {
+  color: #7d6a67;
+  min-height: 92px;
+  font-size: 0.95rem;
+}
+
+.product-card-price {
+  color: #3b2028;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-top: 10px;
+}

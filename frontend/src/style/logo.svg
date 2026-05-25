@@ -1,0 +1,8 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="128" height="128" rx="24" fill="#3B2028"/>
+  <path d="M64 18C73.5 31.7 83 43.2 83 58.4C83 72.1 74.5 82 64 82C53.5 82 45 72.1 45 58.4C45 43.2 54.5 31.7 64 18Z" fill="#F4B860"/>
+  <path d="M64 37C69.7 45.2 75 52.1 75 61.2C75 69.4 70.1 75.2 64 75.2C57.9 75.2 53 69.4 53 61.2C53 52.1 58.3 45.2 64 37Z" fill="#FFF0C7"/>
+  <path d="M37 92H91" stroke="#FFF8F5" stroke-width="8" stroke-linecap="round"/>
+  <path d="M46 106H82" stroke="#F4B860" stroke-width="8" stroke-linecap="round"/>
+  <text x="64" y="116" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="700" fill="#FFF8F5">EL</text>
+</svg>
