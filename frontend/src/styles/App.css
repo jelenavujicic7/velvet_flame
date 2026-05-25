@@ -120,6 +120,40 @@ main {
   padding-left: 0.5rem;
 }
 
+.loader {
+  display: flex;
+  min-height: 260px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-spinner {
+  width: 96px;
+  height: 96px;
+  color: #f4b860;
+  border-width: 0.45rem;
+  filter: drop-shadow(0 8px 18px rgba(59, 32, 40, 0.18));
+}
+
+.message {
+  max-width: 720px;
+  margin: 0 auto 32px;
+  border: 1px solid #ead8d0;
+  border-left: 4px solid #f4b860;
+  border-radius: 8px;
+  background: #fffdfb;
+  color: #3b2028;
+  box-shadow: 0 10px 28px rgba(59, 32, 40, 0.08);
+}
+
+.message.alert-danger {
+  border-left-color: #b84a62;
+}
+
+.message.alert-success {
+  border-left-color: #6a8f63;
+}
+
 .product-card-price {
   color: #3b2028;
   font-size: 1.35rem;
