@@ -1,20 +1,31 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Card, Col, Form, Image, Row } from 'react-bootstrap';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Rating from '../components/Rating';
 import products from '../product_list';
+import { addToCart } from '../slices/cartSlice';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
   const [qty, setQty] = useState(1);
   const [cartMessage, setCartMessage] = useState('');
   const product = products.find((item) => item._id === productId);
   const isLoading = false;
 
   const addToCartHandler = () => {
-    setCartMessage(`${qty} x ${product.name} je dodato u korpu.`);
+    if (!userInfo) {
+      setCartMessage('Morate da se ulogujete da biste dodali proizvod u korpu.');
+      return;
+    }
+
+    dispatch(addToCart({ ...product, qty }));
+    navigate('/cart');
   };
 
   return (
@@ -30,7 +41,11 @@ const ProductScreen = () => {
           <Message variant="danger">Proizvod nije pronadjen.</Message>
         ) : (
           <>
-            {cartMessage && <Message variant="success">{cartMessage}</Message>}
+            {cartMessage && (
+              <Message variant="warning">
+                {cartMessage} <Link to="/login">Prijavi se</Link>
+              </Message>
+            )}
 
             <Card className="product-detail-heading p-4 mb-4">
               <Row className="align-items-center">
