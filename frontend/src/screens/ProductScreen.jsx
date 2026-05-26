@@ -2,21 +2,26 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Card, Col, Form, Image, Row } from 'react-bootstrap';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Rating from '../components/Rating';
 import products from '../product_list';
 import { addToCart } from '../slices/cartSlice';
+import { toggleWishlistItem } from '../slices/wishlistSlice';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { userInfo } = useSelector((state) => state.auth);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
   const [qty, setQty] = useState(1);
   const [cartMessage, setCartMessage] = useState('');
   const product = products.find((item) => item._id === productId);
   const isLoading = false;
+  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
+  const isInWishlist = wishlistItems.some((item) => item._id === product?._id);
 
   const addToCartHandler = () => {
     if (!userInfo) {
@@ -26,6 +31,15 @@ const ProductScreen = () => {
 
     dispatch(addToCart({ ...product, qty }));
     navigate('/cart');
+  };
+
+  const wishlistHandler = () => {
+    if (!userInfo) {
+      setCartMessage('Morate da se ulogujete da biste dodali proizvod u wishlistu.');
+      return;
+    }
+
+    dispatch(toggleWishlistItem({ product, userKey }));
   };
 
   return (
@@ -38,7 +52,7 @@ const ProductScreen = () => {
         {isLoading ? (
           <Loader />
         ) : !product ? (
-          <Message variant="danger">Proizvod nije pronadjen.</Message>
+          <Message variant="danger">Proizvod nije pronađen.</Message>
         ) : (
           <>
             {cartMessage && (
@@ -58,6 +72,19 @@ const ProductScreen = () => {
                 </Col>
                 <Col md={4} className="text-md-end mt-3 mt-md-0">
                   <h2>{product.price.toFixed(2)} RSD</h2>
+                  <Button
+                    type="button"
+                    variant="light"
+                    className={`wishlist-detail-btn mt-3 ${
+                      isInWishlist ? 'wishlist-btn-active' : ''
+                    }`}
+                    onClick={wishlistHandler}
+                  >
+                    {isInWishlist ? <FaHeart /> : <FaRegHeart />}
+                    <span>
+                      {isInWishlist ? 'U wishlisti' : 'Dodaj u wishlistu'}
+                    </span>
+                  </Button>
                 </Col>
               </Row>
             </Card>
@@ -94,12 +121,12 @@ const ProductScreen = () => {
 
                     {product.countInStock > 0 && (
                       <div className="product-info-row">
-                        <span>Kolicina:</span>
+                        <span>Količina:</span>
                         <Form.Select
                           value={qty}
                           onChange={(event) => setQty(Number(event.target.value))}
                           className="qty-select"
-                          aria-label="Izaberi kolicinu"
+                          aria-label="Izaberi količinu"
                         >
                           {[...Array(product.countInStock).keys()].map((item) => (
                             <option key={item + 1} value={item + 1}>

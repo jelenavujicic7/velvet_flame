@@ -23,8 +23,15 @@ const authSlice = createSlice({
       localStorage.setItem('userInfo', JSON.stringify(action.payload));
     },
     logout: (state) => {
+      const userKey = state.userInfo?._id || state.userInfo?.email || state.userInfo?.name;
+
+      if (userKey) {
+        sessionStorage.removeItem(`wishlist-${userKey}`);
+      }
+
       state.userInfo = null;
       localStorage.removeItem('userInfo');
+      sessionStorage.removeItem('orders');
     },
   },
 });

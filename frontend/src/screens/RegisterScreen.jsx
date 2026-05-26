@@ -80,7 +80,7 @@ const RegisterScreen = () => {
             <Form.Label>Ime</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Upisite ime"
+              placeholder="Upišite ime"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -90,7 +90,7 @@ const RegisterScreen = () => {
             <Form.Label>Prezime</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Upisite prezime"
+              placeholder="Upišite prezime"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
             />
@@ -104,17 +104,17 @@ const RegisterScreen = () => {
               aria-label="Izaberite pol"
             >
               <option value="">Izaberite pol</option>
-              <option value="zenski">Zenski</option>
-              <option value="muski">Muski</option>
+              <option value="zenski">Ženski</option>
+              <option value="muski">Muški</option>
               <option value="drugo">Drugo</option>
             </Form.Select>
           </Form.Group>
 
           <Form.Group controlId="birthYear" className="my-3">
-            <Form.Label>Godiste</Form.Label>
+            <Form.Label>Godište</Form.Label>
             <Form.Control
               type="number"
-              placeholder="Upisite godiste"
+              placeholder="Upišite godište"
               min="1900"
               max={new Date().getFullYear()}
               value={birthYear}
@@ -126,7 +126,7 @@ const RegisterScreen = () => {
             <Form.Label>Mesto stanovanja</Form.Label>
             <Form.Control
               type="text"
-              placeholder="Upisite mesto stanovanja"
+              placeholder="Upišite mesto stanovanja"
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
@@ -136,7 +136,7 @@ const RegisterScreen = () => {
             <Form.Label>Email adresa</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Upisite email"
+              placeholder="Upišite email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -146,7 +146,7 @@ const RegisterScreen = () => {
             <Form.Label>Lozinka</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Upisite lozinku"
+              placeholder="Upišite lozinku"
               minLength="8"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

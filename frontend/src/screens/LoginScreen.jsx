@@ -51,7 +51,7 @@ const LoginScreen = () => {
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
-              placeholder="Upisite email"
+              placeholder="Upišite email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -61,7 +61,7 @@ const LoginScreen = () => {
             <Form.Label>Lozinka</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Upisite lozinku"
+              placeholder="Upišite lozinku"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

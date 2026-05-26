@@ -1,10 +1,43 @@
-import { Card } from 'react-bootstrap';
+import { Button, Card } from 'react-bootstrap';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { toggleWishlistItem } from '../slices/wishlistSlice';
 import Rating from './Rating';
 
 const Product = ({ product }) => {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.auth);
+  const { wishlistItems } = useSelector((state) => state.wishlist);
+  const isInWishlist = wishlistItems.some((item) => item._id === product._id);
+  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
+
+  const wishlistHandler = () => {
+    if (!userInfo) {
+      toast.warning('Morate da se prijavite da biste dodali proizvod u wishlistu.');
+      return;
+    }
+
+    dispatch(toggleWishlistItem({ product, userKey }));
+  };
+
   return (
     <Card className="product-card my-3 p-3">
+      <Button
+        type="button"
+        variant="light"
+        className={`wishlist-btn ${isInWishlist ? 'wishlist-btn-active' : ''}`}
+        onClick={wishlistHandler}
+        aria-label={
+          isInWishlist
+            ? `Ukloni ${product.name} iz wishliste`
+            : `Dodaj ${product.name} u wishlistu`
+        }
+      >
+        {isInWishlist ? <FaHeart /> : <FaRegHeart />}
+      </Button>
+
       <Link to={`/product/${product._id}`} className="product-card-link">
         <Card.Img src={product.image} variant="top" className="product-card-image" />
       </Link>

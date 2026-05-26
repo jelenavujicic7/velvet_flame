@@ -57,7 +57,7 @@ const CartScreen = () => {
                               })
                             )
                           }
-                          aria-label={`Kolicina za ${item.name}`}
+                          aria-label={`Količina za ${item.name}`}
                         >
                           {[...Array(item.countInStock).keys()].map((x) => (
                             <option key={x + 1} value={x + 1}>
@@ -101,7 +101,7 @@ const CartScreen = () => {
                       disabled={cartItems.length === 0}
                       onClick={checkoutHandler}
                     >
-                      Nastavi na placanje
+                      Nastavi na plaćanje
                     </Button>
                   </div>
                 </ListGroup.Item>
