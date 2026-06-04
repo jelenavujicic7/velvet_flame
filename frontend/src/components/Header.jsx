@@ -1,5 +1,5 @@
 import { Badge, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { FaClipboardList, FaHeart, FaShoppingBag, FaUser } from 'react-icons/fa';
+import { FaClipboardList, FaHeart, FaInfoCircle, FaShoppingBag, FaUser } from 'react-icons/fa';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -47,6 +47,10 @@ const Header = () => {
 
           <Navbar.Collapse id="elena-navbar-nav">
             <Nav className="ms-auto align-items-md-center">
+              <Nav.Link as={Link} to="/about" className="d-flex align-items-center gap-1">
+                <FaInfoCircle /> O nama
+              </Nav.Link>
+
               <Nav.Link
                 as={Link}
                 to={userInfo ? '/wishlist' : '/login?redirect=/wishlist'}

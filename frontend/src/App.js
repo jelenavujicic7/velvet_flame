@@ -1,6 +1,7 @@
 import Footer from './components/Footer';
 import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
+import AboutScreen from './screens/AboutScreen';
 import CartScreen from './screens/CartScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
@@ -24,6 +25,7 @@ function App() {
       <ToastContainer />
       <Routes>
         <Route path="/" element={<HomeScreen />} />
+        <Route path="/about" element={<AboutScreen />} />
         <Route path="/product/:id" element={<ProductScreen />} />
         <Route path="/cart" element={<CartScreen />} />
         <Route path="/login" element={<LoginScreen />} />
