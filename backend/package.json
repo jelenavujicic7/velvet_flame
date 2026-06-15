@@ -1,0 +1,11 @@
+{
+  "name": "velvet-flame-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Backend skeleton for Velvet Flame.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  }
+}
