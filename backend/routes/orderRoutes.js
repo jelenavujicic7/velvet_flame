@@ -1,13 +1,9 @@
 const express = require('express');
+const { addOrderItems } = require('../controllers/orderController');
+const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  res.status(201).json({
-    _id: Date.now().toString(),
-    ...req.body,
-    createdAt: new Date().toISOString(),
-  });
-});
+router.route('/').post(protect, addOrderItems);
 
 module.exports = router;
