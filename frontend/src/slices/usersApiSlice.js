@@ -30,6 +30,28 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getWishlist: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/wishlist`,
+      }),
+      providesTags: ['User'],
+      keepUnusedDataFor: 5,
+    }),
+    addWishlistItem: builder.mutation({
+      query: (product) => ({
+        url: `${USERS_URL}/wishlist`,
+        method: 'POST',
+        body: product,
+      }),
+      invalidatesTags: ['User'],
+    }),
+    removeWishlistItemApi: builder.mutation({
+      query: (productId) => ({
+        url: `${USERS_URL}/wishlist/${productId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['User'],
+    }),
   }),
 });
 
@@ -38,4 +60,7 @@ export const {
   useLogoutMutation,
   useRegisterMutation,
   useProfileMutation,
+  useGetWishlistQuery,
+  useAddWishlistItemMutation,
+  useRemoveWishlistItemApiMutation,
 } = usersApiSlice;

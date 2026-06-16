@@ -8,7 +8,11 @@ import Message from '../components/Message';
 import Rating from '../components/Rating';
 import products from '../product_list';
 import { addToCart } from '../slices/cartSlice';
-import { toggleWishlistItem } from '../slices/wishlistSlice';
+import {
+  useAddWishlistItemMutation,
+  useRemoveWishlistItemApiMutation,
+} from '../slices/usersApiSlice';
+import { addWishlistItem, removeWishlistItem } from '../slices/wishlistSlice';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -20,8 +24,9 @@ const ProductScreen = () => {
   const [cartMessage, setCartMessage] = useState('');
   const product = products.find((item) => item._id === productId);
   const isLoading = false;
-  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
   const isInWishlist = wishlistItems.some((item) => item._id === product?._id);
+  const [addWishlistItemApi] = useAddWishlistItemMutation();
+  const [removeWishlistItemApi] = useRemoveWishlistItemApiMutation();
 
   const addToCartHandler = () => {
     if (!userInfo) {
@@ -33,13 +38,23 @@ const ProductScreen = () => {
     navigate('/cart');
   };
 
-  const wishlistHandler = () => {
+  const wishlistHandler = async () => {
     if (!userInfo) {
       setCartMessage('Morate da se ulogujete da biste dodali proizvod u wishlistu.');
       return;
     }
 
-    dispatch(toggleWishlistItem({ product, userKey }));
+    try {
+      if (isInWishlist) {
+        await removeWishlistItemApi(product._id).unwrap();
+        dispatch(removeWishlistItem(product._id));
+      } else {
+        await addWishlistItemApi(product).unwrap();
+        dispatch(addWishlistItem(product));
+      }
+    } catch (err) {
+      setCartMessage(err?.data?.message || err.error || 'Wishlist nije azurirana.');
+    }
   };
 
   return (

@@ -10,7 +10,10 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
-import { useLogoutMutation } from '../slices/usersApiSlice';
+import {
+  useGetWishlistQuery,
+  useLogoutMutation,
+} from '../slices/usersApiSlice';
 import { clearWishlist, loadWishlist } from '../slices/wishlistSlice';
 import logo from '../styles/logo.svg';
 
@@ -21,16 +24,18 @@ const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { wishlistItems } = useSelector((state) => state.wishlist);
   const [logoutApiCall] = useLogoutMutation();
+  const { data: wishlistData } = useGetWishlistQuery(undefined, {
+    skip: !userInfo,
+  });
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
-  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
 
   useEffect(() => {
-    if (userInfo) {
-      dispatch(loadWishlist(userKey));
-    } else {
+    if (userInfo && wishlistData) {
+      dispatch(loadWishlist(wishlistData));
+    } else if (!userInfo) {
       dispatch(clearWishlist());
     }
-  }, [dispatch, userInfo, userKey]);
+  }, [dispatch, userInfo, wishlistData]);
 
   const logoutHandler = async () => {
     try {

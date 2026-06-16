@@ -185,6 +185,86 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+const formatWishlist = (wishlistItems) =>
+  wishlistItems.map((item) => ({
+    _id: item.product,
+    name: item.name,
+    image: item.image,
+    price: item.price,
+    countInStock: item.countInStock,
+    category: item.category,
+    description: item.description,
+    rating: item.rating,
+    numReviews: item.numReviews,
+  }));
+
+// @desc Get logged in user wishlist
+// @route GET /api/users/wishlist
+// @access Private
+const getWishlist = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (user) {
+    res.json(formatWishlist(user.wishlistItems));
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc Add item to wishlist
+// @route POST /api/users/wishlist
+// @access Private
+const addWishlistItem = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  const exists = user.wishlistItems.find(
+    (item) => item.product.toString() === req.body._id
+  );
+
+  if (!exists) {
+    user.wishlistItems.push({
+      product: req.body._id,
+      name: req.body.name,
+      image: req.body.image,
+      price: req.body.price,
+      countInStock: req.body.countInStock,
+      category: req.body.category,
+      description: req.body.description,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+    });
+
+    await user.save();
+  }
+
+  res.status(200).json(formatWishlist(user.wishlistItems));
+});
+
+// @desc Remove item from wishlist
+// @route DELETE /api/users/wishlist/:id
+// @access Private
+const removeWishlistItem = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  user.wishlistItems = user.wishlistItems.filter(
+    (item) => item.product.toString() !== req.params.id
+  );
+
+  await user.save();
+  res.status(200).json(formatWishlist(user.wishlistItems));
+});
+
 module.exports = {
   authUser,
   registerUser,
@@ -195,4 +275,7 @@ module.exports = {
   deleteUser,
   getUserById,
   updateUser,
+  getWishlist,
+  addWishlistItem,
+  removeWishlistItem,
 };

@@ -2,18 +2,34 @@ import { Button, Col, Image, ListGroup, Row } from 'react-bootstrap';
 import { FaHeart, FaTrash } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { addToCart } from '../slices/cartSlice';
-import { removeWishlistItem } from '../slices/wishlistSlice';
+import {
+  useGetWishlistQuery,
+  useRemoveWishlistItemApiMutation,
+} from '../slices/usersApiSlice';
+import { loadWishlist, removeWishlistItem } from '../slices/wishlistSlice';
+import { useEffect } from 'react';
 
 const WishlistScreen = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
   const { wishlistItems } = useSelector((state) => state.wishlist);
-  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
+  const { data: wishlistData = [], isLoading, error } = useGetWishlistQuery();
+  const [removeWishlistItemApi] = useRemoveWishlistItemApiMutation();
 
-  const removeHandler = (productId) => {
-    dispatch(removeWishlistItem({ productId, userKey }));
+  useEffect(() => {
+    dispatch(loadWishlist(wishlistData));
+  }, [dispatch, wishlistData]);
+
+  const removeHandler = async (productId) => {
+    try {
+      await removeWishlistItemApi(productId).unwrap();
+      dispatch(removeWishlistItem(productId));
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Proizvod nije uklonjen.');
+    }
   };
 
   const addToCartHandler = (item) => {
@@ -29,7 +45,13 @@ const WishlistScreen = () => {
           </h1>
         </div>
 
-        {wishlistItems.length === 0 ? (
+        {isLoading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">
+            {error?.data?.message || error.error || 'Wishlist nije ucitana.'}
+          </Message>
+        ) : wishlistItems.length === 0 ? (
           <Message>
             Wishlist je prazna. <Link to="/">Pogledaj proizvode</Link>
           </Message>

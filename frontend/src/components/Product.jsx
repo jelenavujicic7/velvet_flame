@@ -3,7 +3,11 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { toggleWishlistItem } from '../slices/wishlistSlice';
+import {
+  useAddWishlistItemMutation,
+  useRemoveWishlistItemApiMutation,
+} from '../slices/usersApiSlice';
+import { addWishlistItem, removeWishlistItem } from '../slices/wishlistSlice';
 import Rating from './Rating';
 
 const Product = ({ product }) => {
@@ -11,15 +15,26 @@ const Product = ({ product }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const { wishlistItems } = useSelector((state) => state.wishlist);
   const isInWishlist = wishlistItems.some((item) => item._id === product._id);
-  const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
+  const [addWishlistItemApi] = useAddWishlistItemMutation();
+  const [removeWishlistItemApi] = useRemoveWishlistItemApiMutation();
 
-  const wishlistHandler = () => {
+  const wishlistHandler = async () => {
     if (!userInfo) {
       toast.warning('Morate da se prijavite da biste dodali proizvod u wishlistu.');
       return;
     }
 
-    dispatch(toggleWishlistItem({ product, userKey }));
+    try {
+      if (isInWishlist) {
+        await removeWishlistItemApi(product._id).unwrap();
+        dispatch(removeWishlistItem(product._id));
+      } else {
+        await addWishlistItemApi(product).unwrap();
+        dispatch(addWishlistItem(product));
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Wishlist nije azurirana.');
+    }
   };
 
   return (
