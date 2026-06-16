@@ -1,17 +1,26 @@
 import { Badge, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { FaClipboardList, FaHeart, FaInfoCircle, FaShoppingBag, FaUser } from 'react-icons/fa';
+import {
+  FaClipboardList,
+  FaHeart,
+  FaInfoCircle,
+  FaShoppingBag,
+  FaUser,
+} from 'react-icons/fa';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
+import { useLogoutMutation } from '../slices/usersApiSlice';
 import { clearWishlist, loadWishlist } from '../slices/wishlistSlice';
 import logo from '../styles/logo.svg';
 
 const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
   const { wishlistItems } = useSelector((state) => state.wishlist);
+  const [logoutApiCall] = useLogoutMutation();
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
   const userKey = userInfo?._id || userInfo?.email || userInfo?.name;
 
@@ -23,9 +32,16 @@ const Header = () => {
     }
   }, [dispatch, userInfo, userKey]);
 
-  const logoutHandler = () => {
-    dispatch(clearWishlist());
-    dispatch(logout());
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+    } catch (error) {
+      // Keep local logout working even if the server cookie is already cleared.
+    } finally {
+      dispatch(clearWishlist());
+      dispatch(logout());
+      navigate('/login');
+    }
   };
 
   return (
@@ -75,9 +91,13 @@ const Header = () => {
 
               {userInfo ? (
                 <NavDropdown title={userInfo.name} id="username">
+                  <NavDropdown.Item as={Link} to="/profile">
+                    <FaUser className="me-2" />
+                    Profil
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/orderhistory">
                     <FaClipboardList className="me-2" />
-                    Istorija porudžbina
+                    Istorija porudzbina
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logoutHandler}>Odjava</NavDropdown.Item>

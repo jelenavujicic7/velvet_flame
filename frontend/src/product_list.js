@@ -9,7 +9,7 @@ import premiumSet from './assets/f3c0cb99-570e-4e5a-b37a-a67efbeba968.jpeg';
 
 const products = [
   {
-    _id: '1',
+    _id: '665000000000000000000001',
     name: 'Elegantna sveća',
     image: elegantnaSveca,
     description:
@@ -21,7 +21,7 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: '2',
+    _id: '665000000000000000000002',
     name: 'Mirisna sveća',
     image: mirisnaSveca,
     description:
@@ -33,7 +33,7 @@ const products = [
     numReviews: 8,
   },
   {
-    _id: '3',
+    _id: '665000000000000000000003',
     name: 'Poklon set',
     image: poklonSet,
     description:
@@ -45,7 +45,7 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: '4',
+    _id: '665000000000000000000004',
     name: 'Dekorativna sveća',
     image: dekorativnaSveca,
     description:
@@ -57,7 +57,7 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: '5',
+    _id: '665000000000000000000005',
     name: 'Lux kolekcija',
     image: luksuznaSveca,
     description:
@@ -69,7 +69,7 @@ const products = [
     numReviews: 10,
   },
   {
-    _id: '6',
+    _id: '665000000000000000000006',
     name: 'Uskršnja dekoracija',
     image: romanticnaSveca,
     description:
@@ -81,7 +81,7 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: '7',
+    _id: '665000000000000000000007',
     name: 'Pastelna sveća',
     image: pastelnaSveca,
     description:
@@ -93,7 +93,7 @@ const products = [
     numReviews: 6,
   },
   {
-    _id: '8',
+    _id: '665000000000000000000008',
     name: 'Premium poklon set',
     image: premiumSet,
     description:

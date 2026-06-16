@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Badge, Button, Card, Col, Form, Image, Row } from 'react-bootstrap';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Rating from '../components/Rating';
@@ -52,7 +52,7 @@ const ProductScreen = () => {
         {isLoading ? (
           <Loader />
         ) : !product ? (
-          <Message variant="danger">Proizvod nije pronađen.</Message>
+          <Message variant="danger">Proizvod nije pronadjen.</Message>
         ) : (
           <>
             {cartMessage && (
@@ -121,12 +121,12 @@ const ProductScreen = () => {
 
                     {product.countInStock > 0 && (
                       <div className="product-info-row">
-                        <span>Količina:</span>
+                        <span>Kolicina:</span>
                         <Form.Select
                           value={qty}
                           onChange={(event) => setQty(Number(event.target.value))}
                           className="qty-select"
-                          aria-label="Izaberi količinu"
+                          aria-label="Izaberi kolicinu"
                         >
                           {[...Array(product.countInStock).keys()].map((item) => (
                             <option key={item + 1} value={item + 1}>

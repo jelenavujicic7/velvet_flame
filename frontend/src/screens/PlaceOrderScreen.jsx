@@ -4,15 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CheckoutSteps from '../components/CheckoutSteps';
+import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { clearCartItems } from '../slices/cartSlice';
+import { useCreateOrderMutation } from '../slices/ordersApiSlice';
 
 const PlaceOrderScreen = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
-  const { userInfo } = useSelector((state) => state.auth);
+  const [createOrder, { isLoading }] = useCreateOrderMutation();
 
   useEffect(() => {
     if (!cart.shippingAddress?.address) {
@@ -22,34 +24,24 @@ const PlaceOrderScreen = () => {
     }
   }, [cart.paymentMethod, cart.shippingAddress, navigate]);
 
-  const placeOrderHandler = () => {
-    const orders = sessionStorage.getItem('orders')
-      ? JSON.parse(sessionStorage.getItem('orders'))
-      : [];
+  const placeOrderHandler = async () => {
+    try {
+      const res = await createOrder({
+        orderItems: cart.cartItems,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        itemsPrice: cart.itemsPrice,
+        shippingPrice: cart.shippingPrice,
+        taxPrice: cart.taxPrice,
+        totalPrice: cart.totalPrice,
+      }).unwrap();
 
-    const newOrder = {
-      _id: Date.now().toString(),
-      orderItems: cart.cartItems,
-      shippingAddress: cart.shippingAddress,
-      user: userInfo
-        ? {
-            _id: userInfo._id,
-            name: userInfo.name,
-            email: userInfo.email,
-          }
-        : null,
-      paymentMethod: cart.paymentMethod,
-      itemsPrice: cart.itemsPrice,
-      shippingPrice: cart.shippingPrice,
-      taxPrice: cart.taxPrice,
-      totalPrice: cart.totalPrice,
-      createdAt: new Date().toISOString(),
-    };
-
-    sessionStorage.setItem('orders', JSON.stringify([...orders, newOrder]));
-    dispatch(clearCartItems());
-    toast.success('Porudžbina je uspešno kreirana.');
-    navigate('/');
+      dispatch(clearCartItems());
+      toast.success('Porudzbina je uspesno kreirana.');
+      navigate(`/order/${res._id}`);
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Porudzbina nije kreirana.');
+    }
   };
 
   return (
@@ -70,12 +62,12 @@ const PlaceOrderScreen = () => {
               </ListGroup.Item>
 
               <ListGroup.Item>
-                <h2>Način plaćanja</h2>
+                <h2>Nacin placanja</h2>
                 <p>{cart.paymentMethod}</p>
               </ListGroup.Item>
 
               <ListGroup.Item>
-                <h2>Stavke porudžbine</h2>
+                <h2>Stavke porudzbine</h2>
                 {cart.cartItems.length === 0 ? (
                   <Message>Korpa je prazna</Message>
                 ) : (
@@ -106,7 +98,7 @@ const PlaceOrderScreen = () => {
             <Card>
               <ListGroup variant="flush">
                 <ListGroup.Item>
-                  <h2>Rezime porudžbine</h2>
+                  <h2>Rezime porudzbine</h2>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <Row>
@@ -136,11 +128,12 @@ const PlaceOrderScreen = () => {
                   <div className="d-grid">
                     <Button
                       type="button"
-                      disabled={cart.cartItems.length === 0}
+                      disabled={cart.cartItems.length === 0 || isLoading}
                       onClick={placeOrderHandler}
                     >
-                      Poručite sada
+                      Porucite sada
                     </Button>
+                    {isLoading && <Loader />}
                   </div>
                 </ListGroup.Item>
               </ListGroup>
