@@ -8,6 +8,7 @@ import {
   useRemoveWishlistItemApiMutation,
 } from '../slices/usersApiSlice';
 import { addWishlistItem, removeWishlistItem } from '../slices/wishlistSlice';
+import logo from '../styles/logo.svg';
 import Rating from './Rating';
 
 const Product = ({ product }) => {
@@ -54,7 +55,14 @@ const Product = ({ product }) => {
       </Button>
 
       <Link to={`/product/${product._id}`} className="product-card-link">
-        <Card.Img src={product.image} variant="top" className="product-card-image" />
+        <Card.Img
+          src={product.image}
+          variant="top"
+          className="product-card-image"
+          onError={(e) => {
+            e.currentTarget.src = logo;
+          }}
+        />
       </Link>
 
       <Card.Body className="px-0 pb-0">

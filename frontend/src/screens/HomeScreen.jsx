@@ -3,10 +3,22 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Product from '../components/Product';
 import products from '../product_list';
+import { useGetProductsQuery } from '../slices/productsApiSlice';
 
 const HomeScreen = () => {
-  const isLoading = !products;
-  const hasProducts = products?.length > 0;
+  const {
+    data: backendProducts = [],
+    isLoading,
+    error,
+  } = useGetProductsQuery();
+  const localProductIds = products.map((product) => product._id);
+  const adminProducts = backendProducts.filter(
+    (product) =>
+      !localProductIds.includes(product._id) &&
+      !product.image?.startsWith('/images/')
+  );
+  const displayedProducts = [...adminProducts, ...products];
+  const hasProducts = displayedProducts.length > 0;
 
   return (
     <main className="home-screen" aria-busy={isLoading}>
@@ -18,9 +30,13 @@ const HomeScreen = () => {
 
         {isLoading ? (
           <Loader />
+        ) : error ? (
+          <Message variant="danger">
+            {error?.data?.message || error.error || 'Proizvodi nisu ucitani.'}
+          </Message>
         ) : hasProducts ? (
           <Row>
-            {products.map((product) => (
+            {displayedProducts.map((product) => (
               <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
                 <Product product={product} />
               </Col>

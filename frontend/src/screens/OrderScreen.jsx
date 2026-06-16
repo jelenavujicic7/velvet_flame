@@ -4,9 +4,11 @@ import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import {
+  useDeliverOrderMutation,
   useGetOrderDetailsQuery,
   usePayOrderMutation,
 } from '../slices/ordersApiSlice';
+import { useSelector } from 'react-redux';
 
 const formatPrice = (price) => Number(price || 0).toFixed(2);
 
@@ -20,6 +22,9 @@ const OrderScreen = () => {
   } = useGetOrderDetailsQuery(orderId);
 
   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+  const [deliverOrder, { isLoading: loadingDeliver }] =
+    useDeliverOrderMutation();
+  const { userInfo } = useSelector((state) => state.auth);
 
   const markAsPaidHandler = async () => {
     try {
@@ -39,6 +44,16 @@ const OrderScreen = () => {
       toast.success('Porudzbina je oznacena kao placena.');
     } catch (err) {
       toast.error(err?.data?.message || err.error || 'Placanje nije sacuvano.');
+    }
+  };
+
+  const deliverHandler = async () => {
+    try {
+      await deliverOrder(orderId).unwrap();
+      refetch();
+      toast.success('Porudzbina je oznacena kao dostavljena.');
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'Status nije sacuvan.');
     }
   };
 
@@ -169,6 +184,16 @@ const OrderScreen = () => {
                     <div className="d-grid">
                       <Button onClick={markAsPaidHandler} disabled={loadingPay}>
                         Oznaci kao placeno
+                      </Button>
+                    </div>
+                  </ListGroup.Item>
+                )}
+                {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
+                  <ListGroup.Item>
+                    {loadingDeliver && <Loader />}
+                    <div className="d-grid">
+                      <Button onClick={deliverHandler} disabled={loadingDeliver}>
+                        Oznaci kao dostavljeno
                       </Button>
                     </div>
                   </ListGroup.Item>

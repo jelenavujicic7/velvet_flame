@@ -8,11 +8,13 @@ import Message from '../components/Message';
 import Rating from '../components/Rating';
 import products from '../product_list';
 import { addToCart } from '../slices/cartSlice';
+import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 import {
   useAddWishlistItemMutation,
   useRemoveWishlistItemApiMutation,
 } from '../slices/usersApiSlice';
 import { addWishlistItem, removeWishlistItem } from '../slices/wishlistSlice';
+import logo from '../styles/logo.svg';
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -22,8 +24,15 @@ const ProductScreen = () => {
   const { wishlistItems } = useSelector((state) => state.wishlist);
   const [qty, setQty] = useState(1);
   const [cartMessage, setCartMessage] = useState('');
-  const product = products.find((item) => item._id === productId);
-  const isLoading = false;
+  const localProduct = products.find((item) => item._id === productId);
+  const {
+    data: backendProduct,
+    isLoading,
+    error,
+  } = useGetProductDetailsQuery(productId, {
+    skip: Boolean(localProduct),
+  });
+  const product = localProduct || backendProduct;
   const isInWishlist = wishlistItems.some((item) => item._id === product?._id);
   const [addWishlistItemApi] = useAddWishlistItemMutation();
   const [removeWishlistItemApi] = useRemoveWishlistItemApiMutation();
@@ -66,6 +75,10 @@ const ProductScreen = () => {
 
         {isLoading ? (
           <Loader />
+        ) : error ? (
+          <Message variant="danger">
+            {error?.data?.message || error.error || 'Proizvod nije pronadjen.'}
+          </Message>
         ) : !product ? (
           <Message variant="danger">Proizvod nije pronadjen.</Message>
         ) : (
@@ -107,7 +120,14 @@ const ProductScreen = () => {
             <Row className="gy-4">
               <Col lg={8}>
                 <Card className="product-detail-media p-4">
-                  <Image src={product.image} alt={product.name} fluid />
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fluid
+                    onError={(e) => {
+                      e.currentTarget.src = logo;
+                    }}
+                  />
                 </Card>
               </Col>
 

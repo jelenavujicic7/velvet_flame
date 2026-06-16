@@ -1,4 +1,5 @@
 import Footer from './components/Footer';
+import AdminRoute from './components/AdminRoute';
 import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
 import AboutScreen from './screens/AboutScreen';
@@ -14,6 +15,12 @@ import ProductScreen from './screens/ProductScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ShippingScreen from './screens/ShippingScreen';
 import WishlistScreen from './screens/WishlistScreen';
+import OrderListScreen from './screens/admin/OrderListScreen';
+import ProductCreateScreen from './screens/admin/ProductCreateScreen';
+import ProductEditScreen from './screens/admin/ProductEditScreen';
+import ProductListScreen from './screens/admin/ProductListScreen';
+import UserEditScreen from './screens/admin/UserEditScreen';
+import UserListScreen from './screens/admin/UserListScreen';
 import { Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -40,6 +47,14 @@ function App() {
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/wishlist" element={<WishlistScreen />} />
           <Route path="/orderhistory" element={<OrderHistoryScreen />} />
+        </Route>
+        <Route path="" element={<AdminRoute />}>
+          <Route path="/admin/orderlist" element={<OrderListScreen />} />
+          <Route path="/admin/productlist" element={<ProductListScreen />} />
+          <Route path="/admin/product/create" element={<ProductCreateScreen />} />
+          <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
+          <Route path="/admin/userlist" element={<UserListScreen />} />
+          <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
         </Route>
       </Routes>
       <Footer />
