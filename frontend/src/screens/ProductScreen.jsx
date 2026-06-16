@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Badge, Button, Card, Col, Form, Image, Row } from 'react-bootstrap';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaRegStar, FaStar } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Rating from '../components/Rating';
 import products from '../product_list';
 import { addToCart } from '../slices/cartSlice';
-import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
+import {
+  useCreateReviewMutation,
+  useGetProductDetailsQuery,
+} from '../slices/productsApiSlice';
 import {
   useAddWishlistItemMutation,
   useRemoveWishlistItemApiMutation,
@@ -24,6 +28,7 @@ const ProductScreen = () => {
   const { wishlistItems } = useSelector((state) => state.wishlist);
   const [qty, setQty] = useState(1);
   const [cartMessage, setCartMessage] = useState('');
+  const [rating, setRating] = useState('');
   const localProduct = products.find((item) => item._id === productId);
   const {
     data: backendProduct,
@@ -36,6 +41,8 @@ const ProductScreen = () => {
   const isInWishlist = wishlistItems.some((item) => item._id === product?._id);
   const [addWishlistItemApi] = useAddWishlistItemMutation();
   const [removeWishlistItemApi] = useRemoveWishlistItemApiMutation();
+  const [createReview, { isLoading: loadingReview }] =
+    useCreateReviewMutation();
 
   const addToCartHandler = () => {
     if (!userInfo) {
@@ -63,6 +70,27 @@ const ProductScreen = () => {
       }
     } catch (err) {
       setCartMessage(err?.data?.message || err.error || 'Wishlist nije azurirana.');
+    }
+  };
+
+  const submitReviewHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      await createReview({
+        productId,
+        rating,
+      }).unwrap();
+      setRating('');
+      setCartMessage('Hvala na oceni proizvoda.');
+    } catch (err) {
+      const rawMessage = err?.data?.message || err.error || 'Recenzija nije dodata.';
+      const message =
+        rawMessage === 'Product not found'
+          ? 'Samo kupci mogu da ocene ovaj proizvod'
+          : rawMessage;
+      setCartMessage(message);
+      toast.error(message);
     }
   };
 
@@ -193,6 +221,65 @@ const ProductScreen = () => {
                 <p>{product.description}</p>
               </Card.Body>
             </Card>
+
+            <Row className="gy-4 mt-2">
+              <Col md={6}>
+                <Card className="product-description-card">
+                  <Card.Body>
+                    <h3>Recenzije</h3>
+                    {product.reviews?.length === 0 || !product.reviews ? (
+                      <Message>Nema recenzija za ovaj proizvod.</Message>
+                    ) : (
+                      product.reviews.map((review) => (
+                        <div key={review._id} className="product-review">
+                          <strong>{review.name}</strong>
+                          <Rating value={review.rating} />
+                          <p>{review.createdAt?.substring(0, 10)}</p>
+                          {review.comment && <p>{review.comment}</p>}
+                        </div>
+                      ))
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col md={6}>
+                <Card className="product-description-card">
+                  <Card.Body>
+                    <h3>Ocenite proizvod</h3>
+                    {userInfo ? (
+                      <Form onSubmit={submitReviewHandler}>
+                        <Form.Group controlId="rating" className="my-3">
+                          <Form.Label>Ocena</Form.Label>
+                          <div className="rating-input" aria-label="Izaberite ocenu">
+                            {[1, 2, 3, 4, 5].map((value) => (
+                              <button
+                                key={value}
+                                type="button"
+                                className="rating-star-btn"
+                                onClick={() => setRating(value)}
+                                aria-label={`Ocena ${value}`}
+                              >
+                                {Number(rating) >= value ? <FaStar /> : <FaRegStar />}
+                              </button>
+                            ))}
+                          </div>
+                        </Form.Group>
+
+                        <Button type="submit" disabled={loadingReview}>
+                          Posalji ocenu
+                        </Button>
+                        {loadingReview && <Loader />}
+                      </Form>
+                    ) : (
+                      <Message>
+                        Prijavite se da biste ocenili proizvod.
+                      </Message>
+                    )}
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
           </>
         )}
       </div>

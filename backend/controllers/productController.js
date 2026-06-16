@@ -1,4 +1,5 @@
 const asyncHandler = require('../middleware/asyncHandler');
+const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 
 // @desc Fetch all products
@@ -102,10 +103,64 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Create new review
+// @route POST /api/products/:id/reviews
+// @access Private
+const createProductReview = asyncHandler(async (req, res) => {
+  const { rating } = req.body || {};
+  const product = await Product.findById(req.params.id);
+
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  const hasBoughtProduct = await Order.findOne({
+    user: req.user._id,
+    'orderItems.product': req.params.id,
+  });
+
+  if (!hasBoughtProduct) {
+    res.status(400);
+    throw new Error('Samo kupci mogu da ocene ovaj proizvod');
+  }
+
+  const alreadyReviewed = product.reviews.find(
+    (review) => review.user.toString() === req.user._id.toString()
+  );
+
+  if (alreadyReviewed) {
+    res.status(400);
+    throw new Error('Vec ste ocenili ovaj proizvod');
+  }
+
+  if (!rating) {
+    res.status(400);
+    throw new Error('Izaberite ocenu');
+  }
+
+  const review = {
+    name: req.user.name,
+    rating: Number(rating),
+    comment: '',
+    user: req.user._id,
+  };
+
+  product.reviews.push(review);
+  product.numReviews = product.reviews.length;
+  product.rating =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.reviews.length;
+
+  await product.save();
+  res.status(201).json({ message: 'Recenzija je dodata' });
+});
+
 module.exports = {
   getProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  createProductReview,
 };
