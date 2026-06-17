@@ -10,7 +10,7 @@ import {
   useGetWishlistQuery,
   useRemoveWishlistItemApiMutation,
 } from '../slices/usersApiSlice';
-import { loadWishlist, removeWishlistItem } from '../slices/wishlistSlice';
+import { loadWishlist } from '../slices/wishlistSlice';
 import { useEffect } from 'react';
 
 const WishlistScreen = () => {
@@ -25,8 +25,8 @@ const WishlistScreen = () => {
 
   const removeHandler = async (productId) => {
     try {
-      await removeWishlistItemApi(productId).unwrap();
-      dispatch(removeWishlistItem(productId));
+      const wishlist = await removeWishlistItemApi(productId).unwrap();
+      dispatch(loadWishlist(wishlist));
     } catch (err) {
       toast.error(err?.data?.message || err.error || 'Proizvod nije uklonjen.');
     }

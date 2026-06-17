@@ -17,7 +17,7 @@ import {
   useAddWishlistItemMutation,
   useRemoveWishlistItemApiMutation,
 } from '../slices/usersApiSlice';
-import { addWishlistItem, removeWishlistItem } from '../slices/wishlistSlice';
+import { loadWishlist } from '../slices/wishlistSlice';
 import logo from '../styles/logo.svg';
 
 const ProductScreen = () => {
@@ -62,11 +62,11 @@ const ProductScreen = () => {
 
     try {
       if (isInWishlist) {
-        await removeWishlistItemApi(product._id).unwrap();
-        dispatch(removeWishlistItem(product._id));
+        const wishlist = await removeWishlistItemApi(product._id).unwrap();
+        dispatch(loadWishlist(wishlist));
       } else {
-        await addWishlistItemApi(product).unwrap();
-        dispatch(addWishlistItem(product));
+        const wishlist = await addWishlistItemApi(product).unwrap();
+        dispatch(loadWishlist(wishlist));
       }
     } catch (err) {
       setCartMessage(err?.data?.message || err.error || 'Wishlist nije azurirana.');

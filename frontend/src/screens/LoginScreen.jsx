@@ -6,7 +6,8 @@ import { toast } from 'react-toastify';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import { setCredentials } from '../slices/authSlice';
-import { useLoginMutation } from '../slices/usersApiSlice';
+import { usersApiSlice, useLoginMutation } from '../slices/usersApiSlice';
+import { loadWishlist } from '../slices/wishlistSlice';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -35,6 +36,12 @@ const LoginScreen = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
+      const wishlist = await dispatch(
+        usersApiSlice.endpoints.getWishlist.initiate(undefined, {
+          forceRefetch: true,
+        })
+      ).unwrap();
+      dispatch(loadWishlist(wishlist));
       navigate(redirect);
     } catch (err) {
       toast.error(err?.data?.message || err.error || 'Prijava nije uspela.');

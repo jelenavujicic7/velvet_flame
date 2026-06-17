@@ -34,7 +34,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `${USERS_URL}/wishlist`,
       }),
-      providesTags: ['User'],
+      providesTags: ['Wishlist'],
       keepUnusedDataFor: 5,
     }),
     addWishlistItem: builder.mutation({
@@ -43,14 +43,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: 'POST',
         body: product,
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ['Wishlist'],
     }),
     removeWishlistItemApi: builder.mutation({
       query: (productId) => ({
         url: `${USERS_URL}/wishlist/${productId}`,
         method: 'DELETE',
       }),
-      invalidatesTags: ['User'],
+      invalidatesTags: ['Wishlist'],
     }),
     getUsers: builder.query({
       query: () => ({

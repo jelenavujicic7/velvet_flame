@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../slices/authSlice';
+import { apiSlice } from '../slices/apiSlice';
 import {
   useGetWishlistQuery,
   useLogoutMutation,
@@ -26,6 +27,7 @@ const Header = () => {
   const [logoutApiCall] = useLogoutMutation();
   const { data: wishlistData } = useGetWishlistQuery(undefined, {
     skip: !userInfo,
+    refetchOnMountOrArgChange: true,
   });
   const cartItemsCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
@@ -44,6 +46,7 @@ const Header = () => {
       // Keep local logout working even if the server cookie is already cleared.
     } finally {
       dispatch(clearWishlist());
+      dispatch(apiSlice.util.resetApiState());
       dispatch(logout());
       navigate('/login');
     }
