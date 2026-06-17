@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import './index.css';
@@ -11,9 +12,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <HashRouter>
-        <App />
-      </HashRouter>
+      <PayPalScriptProvider options={{ clientId: 'test', currency: 'EUR' }}>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </PayPalScriptProvider>
     </Provider>
   </React.StrictMode>
 );

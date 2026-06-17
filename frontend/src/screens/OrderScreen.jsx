@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -6,6 +8,7 @@ import Message from '../components/Message';
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
+  useGetPaypalClientIdQuery,
   usePayOrderMutation,
 } from '../slices/ordersApiSlice';
 import { useSelector } from 'react-redux';
@@ -25,26 +28,57 @@ const OrderScreen = () => {
   const [deliverOrder, { isLoading: loadingDeliver }] =
     useDeliverOrderMutation();
   const { userInfo } = useSelector((state) => state.auth);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const {
+    data: paypal,
+    isLoading: loadingPayPal,
+    error: errorPayPal,
+  } = useGetPaypalClientIdQuery();
 
-  const markAsPaidHandler = async () => {
+  useEffect(() => {
+    if (!errorPayPal && !loadingPayPal && paypal?.clientId && order && !order.isPaid) {
+      paypalDispatch({
+        type: 'resetOptions',
+        value: {
+          clientId: paypal.clientId,
+          currency: 'EUR',
+        },
+      });
+      paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+    }
+  }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
+
+  const onApprove = async (data, actions) => {
     try {
+      const details = await actions.order.capture();
       await payOrder({
         orderId,
-        details: {
-          id: `manual-${Date.now()}`,
-          status: 'COMPLETED',
-          update_time: new Date().toISOString(),
-          payer: {
-            email_address: order.user?.email,
-          },
-        },
+        details,
       }).unwrap();
 
       refetch();
-      toast.success('Porudzbina je oznacena kao placena.');
+      toast.success('Porudzbina je uspesno placena.');
     } catch (err) {
       toast.error(err?.data?.message || err.error || 'Placanje nije sacuvano.');
     }
+  };
+
+  const onError = (err) => {
+    toast.error(err?.message || 'Greska prilikom PayPal placanja.');
+  };
+
+  const createOrder = (data, actions) => {
+    const totalInEur = (Number(order.totalPrice) / 117.2).toFixed(2);
+
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: {
+            value: totalInEur,
+          },
+        },
+      ],
+    });
   };
 
   const deliverHandler = async () => {
@@ -181,11 +215,27 @@ const OrderScreen = () => {
                 {!order.isPaid && (
                   <ListGroup.Item>
                     {loadingPay && <Loader />}
-                    <div className="d-grid">
-                      <Button onClick={markAsPaidHandler} disabled={loadingPay}>
-                        Oznaci kao placeno
-                      </Button>
-                    </div>
+                    {loadingPayPal ? (
+                      <Loader />
+                    ) : errorPayPal ? (
+                      <Message variant="danger">
+                        {errorPayPal?.data?.message ||
+                          errorPayPal.error ||
+                          'PayPal nije ucitan.'}
+                      </Message>
+                    ) : isPending ? (
+                      <Loader />
+                    ) : order.paymentMethod === 'PayPal' ? (
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      />
+                    ) : (
+                      <Message>
+                        Placanje pouzećem se evidentira nakon preuzimanja.
+                      </Message>
+                    )}
                   </ListGroup.Item>
                 )}
                 {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (

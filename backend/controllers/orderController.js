@@ -1,9 +1,15 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Order = require('../models/orderModel');
 
-// @desc Create new order
-// @route POST /api/orders
-// @access Private
+const getOrderOrFail = async (id, res) => {
+  const order = await Order.findById(id).populate('user', 'name email');
+  if (!order) {
+    res.status(404);
+    throw new Error('Order not found');
+  }
+  return order;
+};
+
 const addOrderItems = asyncHandler(async (req, res) => {
   const {
     orderItems,
@@ -20,7 +26,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
     throw new Error('Nema porudzbina');
   }
 
-  const order = new Order({
+  const order = await Order.create({
     orderItems: orderItems.map((item) => ({
       ...item,
       product: item._id,
@@ -35,99 +41,59 @@ const addOrderItems = asyncHandler(async (req, res) => {
     totalPrice,
   });
 
-  const createdOrder = await order.save();
-  res.status(201).json(createdOrder);
+  res.status(201).json(order);
 });
 
-// @desc Get logged in user orders
-// @route GET /api/orders/myorders
-// @access Private
 const getMyOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({ user: req.user._id });
-  res.status(200).json(orders);
+  res.status(200).json(await Order.find({ user: req.user._id }));
 });
 
-// @desc Get order by ID
-// @route GET /api/orders/:id
-// @access Private
 const getOrderById = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id).populate(
-    'user',
-    'name email'
-  );
+  const order = await getOrderOrFail(req.params.id, res);
+  const isOwner = order.user._id.toString() === req.user._id.toString();
 
-  if (order) {
-    if (
-      order.user._id.toString() === req.user._id.toString() ||
-      req.user.isAdmin
-    ) {
-      res.status(200).json(order);
-    } else {
-      res.status(401);
-      throw new Error('Not authorized to view this order');
-    }
-  } else {
-    res.status(404);
-    throw new Error('Order not found');
+  if (!isOwner && !req.user.isAdmin) {
+    res.status(401);
+    throw new Error('Not authorized to view this order');
   }
+
+  res.status(200).json(order);
 });
 
-// @desc Update order to paid
-// @route PUT /api/orders/:id/pay
-// @access Private
 const updateOrderToPaid = asyncHandler(async (req, res) => {
   const order = await Order.findById(req.params.id);
 
-  if (order) {
-    if (
-      order.user.toString() !== req.user._id.toString() &&
-      !req.user.isAdmin
-    ) {
-      res.status(401);
-      throw new Error('Not authorized to update this order');
-    }
-
-    order.isPaid = true;
-    order.paidAt = Date.now();
-    order.paymentResult = {
-      id: req.body.id,
-      status: req.body.status,
-      update_time: req.body.update_time,
-      email_address: req.body.payer?.email_address,
-    };
-
-    const updatedOrder = await order.save();
-    res.status(200).json(updatedOrder);
-  } else {
+  if (!order) {
     res.status(404);
     throw new Error('Order not found');
   }
+
+  if (order.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+    res.status(401);
+    throw new Error('Not authorized to update this order');
+  }
+
+  order.isPaid = true;
+  order.paidAt = Date.now();
+  order.paymentResult = {
+    id: req.body.id,
+    status: req.body.status,
+    update_time: req.body.update_time,
+    email_address: req.body.payer?.email_address,
+  };
+
+  res.status(200).json(await order.save());
 });
 
-// @desc Update order to delivered
-// @route PUT /api/orders/:id/deliver
-// @access Private/Admin
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
-  const order = await Order.findById(req.params.id);
-
-  if (order) {
-    order.isDelivered = true;
-    order.deliveredAt = Date.now();
-
-    const updatedOrder = await order.save();
-    res.status(200).json(updatedOrder);
-  } else {
-    res.status(404);
-    throw new Error('Order not found');
-  }
+  const order = await getOrderOrFail(req.params.id, res);
+  order.isDelivered = true;
+  order.deliveredAt = Date.now();
+  res.status(200).json(await order.save());
 });
 
-// @desc Get all orders
-// @route GET /api/orders
-// @access Private/Admin
 const getOrders = asyncHandler(async (req, res) => {
-  const orders = await Order.find({}).populate('user', 'id name');
-  res.status(200).json(orders);
+  res.status(200).json(await Order.find({}).populate('user', 'id name'));
 });
 
 module.exports = {
